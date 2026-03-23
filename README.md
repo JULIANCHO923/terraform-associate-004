@@ -1,45 +1,51 @@
-# 🚀 Terraform Associate 004: Lab de Infraestructura Segura
+# 🚀 Terraform Associate 004: Lab 1 - The "Hello World" of IaC
 
-Este repositorio contiene un proyecto "Hello World" evolucionado para AWS, diseñado para cubrir los objetivos clave del examen de certificación **HashiCorp Certified: Terraform Associate (004)**.
 
----
 
-## 🧠 Conceptos Core del Examen en este Proyecto
+## Pre-commit
 
-### 1. Gestión de Secretos y Variables Efímeras (v1.12+)
-Para evitar que las credenciales queden grabadas en el archivo `terraform.tfstate`, utilizamos:
-* **`ephemeral "variable"`**: Valores que solo viven en memoria.
-* **Uso:** Autenticación del Provider y contraseñas de Base de Datos.
-* **Tip de Examen:** Los datos efímeros NO aparecen en el JSON del estado.
+https://github.com/antonbabenko/pre-commit-terraform/blob/master/README.md
 
-### 2. El Ciclo de Vida de las Validaciones
-Implementamos las 4 capas de validación de Terraform:
+brew install pre-commit terraform-docs tflint tfsec trivy checkov terrascan infracost tfupdate minamijoyo/hcledit/hcledit jq
 
-| Tipo | Momento de Ejecución | ¿Bloquea el Apply? | Propósito |
-| :--- | :--- | :--- | :--- |
-| **Variable Validation** | Inicio del Plan | Sí | Validar formato del input (ej. Regex de nombres). |
-| **Precondition** | Antes de crear el recurso | Sí | Validar dependencias externas (ej. ¿Existe la AMI?). |
-| **Postcondition** | Después de crear el recurso | Sí | Validar el resultado (ej. ¿Tiene IP pública?). |
-| **Check** | Continuo / Al final | No (Warning) | Monitoreo de salud (ej. ¿Responde el endpoint?). |
+# Terraform docs
 
----
+`terraform-docs markdown table --output-file README.md --output-mode inject .`
 
-## 🛠 Comandos Críticos de Gestión de Estado (`tfstate`)
+<!-- BEGIN_TF_DOCS -->
+## Requirements
 
-En este laboratorio practicamos la manipulación segura del estado:
-* `terraform state list`: Muestra qué recursos "recuerda" Terraform.
-* `terraform state show <recurso>`: Atributos detallados de un objeto en el estado.
-* `terraform plan -refresh-only`: Sincroniza el estado con la realidad de AWS sin cambiar nada.
-* `terraform state mv`: Renombrar recursos en el estado (usar bloque `moved` en código es preferible).
+| Name | Version |
+|------|---------|
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.0 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.0 |
 
----
+## Providers
 
-## 🏷 Estrategia de Tags y Cumplimiento (Sentinel)
-Para alinearnos con las políticas de **HCP Sentinel (Policy as Code)**, usamos la función `merge()` en `locals.tf`.
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.100.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.8.1 |
 
-```hcl
-# Ejemplo de lógica de tags obligatorios
-tags = merge(var.common_tags, {
-  Environment = upper(var.environment)
-  Project     = "Odisea-Viajera-Study"
-})
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [aws_s3_bucket.practice_bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
+| [random_id.suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_AWS_ACCESS_KEY_ID"></a> [AWS\_ACCESS\_KEY\_ID](#input\_AWS\_ACCESS\_KEY\_ID) | n/a | `string` | n/a | yes |
+| <a name="input_AWS_SECRET_ACCESS_KEY"></a> [AWS\_SECRET\_ACCESS\_KEY](#input\_AWS\_SECRET\_ACCESS\_KEY) | n/a | `string` | n/a | yes |
+
+## Outputs
+
+No outputs.
+<!-- END_TF_DOCS -->

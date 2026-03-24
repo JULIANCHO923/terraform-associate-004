@@ -25,6 +25,7 @@ brew install pre-commit terraform-docs tflint tfsec trivy checkov terrascan infr
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 5.100.0 |
+| <a name="provider_aws.west"></a> [aws.west](#provider\_aws.west) | 5.100.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | 3.8.1 |
 
 ## Modules
@@ -35,8 +36,9 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [aws_s3_bucket.practice_bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
-| [random_id.suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
+| [aws_s3_bucket.east_bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
+| [aws_s3_bucket.west_bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
+| [random_id.id](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
 
 ## Inputs
 

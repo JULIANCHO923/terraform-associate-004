@@ -11,7 +11,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = "~> 5.0" # Allows 5.x, but not 6.0
     }
     random = {
       source  = "hashicorp/random"
@@ -36,14 +36,43 @@ provider "aws" {
   secret_key = var.AWS_SECRET_ACCESS_KEY
 }
 
-resource "aws_s3_bucket" "practice_bucket" {
-  # S3 bucket names must be globally unique
-  bucket = "odisea-study-bucket-${random_id.suffix.hex}"
+provider "aws" {
+  alias      = "west"
+  region     = "us-west-2"
+  access_key = var.AWS_ACCESS_KEY_ID
+  secret_key = var.AWS_SECRET_ACCESS_KEY
+}
+
+resource "aws_s3_bucket" "east_bucket" {
+  bucket = "odisea-study-bucket-9e4055d3"
+  # Uses default provider automatically
+
   tags = {
     BusinessUnit = "local"
   }
 }
 
-resource "random_id" "suffix" {
+resource "aws_s3_bucket" "west_bucket" {
+  provider = aws.west # Explicitly uses the alias
+  bucket   = "odisea-west-${random_id.id.hex}"
+
+  tags = {
+    BusinessUnit = "local"
+  }
+}
+
+resource "random_id" "id" {
   byte_length = 4
+}
+
+
+moved {
+  from = random_id.suffix
+  to   = random_id.id
+}
+
+
+moved {
+  from = aws_s3_bucket.practice_bucket
+  to   = aws_s3_bucket.east_bucket
 }

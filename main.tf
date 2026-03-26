@@ -7,11 +7,11 @@ terraform {
       name = "terraform-associate-004"
     }
   }
-
+  required_version = "1.12.2"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0" # Allows 5.x, but not 6.0
+      version = "~> 5.0" # Allows 5.x, but not 6.x 
     }
     random = {
       source  = "hashicorp/random"
@@ -75,4 +75,44 @@ moved {
 moved {
   from = aws_s3_bucket.practice_bucket
   to   = aws_s3_bucket.east_bucket
+}
+
+
+# 1. Obtener la AMI más reciente de Amazon Linux 2023
+data "aws_ami" "amazon_linux_2023" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["al2023-ami-*-x86_64"]
+  }
+}
+
+# 2. Definición de la Instancia
+resource "aws_instance" "app_server_large" {
+  ami           = data.aws_ami.amazon_linux_2023.id
+  instance_type = "t3.2xlarge" # 8 vCPUs, 32 GiB RAM
+
+  # Configuración de almacenamiento (Best Practice para instancias grandes)
+  root_block_device {
+    volume_size           = 50
+    volume_type           = "gp3"
+    iops                  = 3000
+    throughput            = 125
+    delete_on_termination = true
+  }
+
+  # Tags de cumplimiento (Para que Sentinel no nos bloquee)
+  tags = {
+    Name         = "prod-app-server-01"
+    Environment  = "production"
+    BusinessUnit = "Engineering" # Tag obligatorio según nuestro ejercicio previo
+    ManagedBy    = "Terraform"
+  }
+
+  # Evitar que cambios accidentales en tags recrean la instancia
+  lifecycle {
+    ignore_changes = [tags["BusinessUnit"]]
+  }
 }

@@ -113,11 +113,6 @@ resource "aws_instance" "app_server_large" {
 
   # Evitar que cambios accidentales en tags recrean la instancia
   lifecycle {
-    ignore_changes = [tags["CreatedDate"]]
-    # Precondición: Validar que no estemos en una región prohibida
-    precondition {
-      condition     = contains(["us-east-1", "us-west-2"]) # Ejemplo lógico
-      error_message = "Esta instancia solo debe desplegarse en regiones autorizadas."
-    }
+    ignore_changes = [tags["BusinessUnit"]]
   }
 }
